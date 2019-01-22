@@ -9,7 +9,7 @@ namespace countdown
 {
     class Program
     {
-        private static List<string> _words = new List<string>();
+        private static StringHash _words = new StringHash();
 
         static void Main(string[] args)
         {
@@ -27,7 +27,7 @@ namespace countdown
             StringHash words = new StringHash();
             FindWords(buffer, words);
 
-            foreach (string word in words.EnumerateItems().OrderByDescending(x => x.Length))
+            foreach (string word in words.EnumerateItems().OrderBy(x => x.Length))
             {
                 Console.WriteLine(word);
             }
@@ -90,29 +90,7 @@ namespace countdown
 
         private static bool IsValidWord(ReadOnlySpan<char> subWord)
         {
-            int start = 0;
-            int end = _words.Count;
-
-            while (start < end)
-            {
-                int mid = (start + end) / 2;
-
-                int result = MemoryExtensions.CompareTo(subWord, _words[mid], StringComparison.Ordinal);
-                if (result == 0)
-                {
-                    return true;
-                }
-                else if (result > 0)
-                {
-                    start = mid + 1;
-                }
-                else
-                {
-                    end = mid - 1;
-                }
-            }
-
-            return false;
+            return _words.Contains(subWord);
         }
 
         static void LoadWordList()
@@ -124,8 +102,6 @@ namespace countdown
                 {
                     _words.Add(line.ToLower());
                 }
-
-                _words.OrderBy(x => x);
             }
         }
     }
