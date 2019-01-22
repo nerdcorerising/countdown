@@ -1,0 +1,18 @@
+﻿<Properties StartupConfiguration="{71933986-93F8-4F35-B891-42C4D934873D}|Default">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Program.cs">
+    <Files>
+      <File FileName="Program.cs" Line="13" Column="1" />
+      <File FileName="misc.txt" Line="13" Column="6" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.ItemProperties.countdown PreferredExecutionTarget="MonoDevelop.Default" />
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore>
+      <Breakpoint file="/Users/dave/projects/countdown/Program.cs" relfile="Program.cs" line="26" column="1" />
+      <Breakpoint file="/Users/dave/projects/countdown/Program.cs" relfile="Program.cs" line="59" column="1" />
+    </BreakpointStore>
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MultiItemStartupConfigurations />
+</Properties>
