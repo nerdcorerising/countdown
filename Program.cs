@@ -23,28 +23,69 @@ namespace countdown
             timer.Start();
             LoadWordList();
 
-            List<char> chars = args[0].ToLower().ToList();
-            List<string> potentialWords = GeneratePermuation(chars);
-            HashSet<string> foundWords = new HashSet<string>();
-            foreach (string word in potentialWords)
-            {
-                List<string> subWords = GenerateSubWords(word);
-                foreach (string subWord in subWords)
-                {
-                    if (IsValidWord(subWord))
-                    {
-                        foundWords.Add(subWord);
-                    }
-                }
-            }
+            char[] buffer = args[0].ToLower().ToArray();
+            StringHash words = new StringHash();
+            FindWords(buffer, words);
 
-            foreach (string word in foundWords.OrderByDescending(x => x.Length))
+            foreach (string word in words.EnumerateItems().OrderByDescending(x => x.Length))
             {
-                Console.WriteLine($"{word}");
+                Console.WriteLine(word);
             }
 
             timer.Stop();
             Console.WriteLine($"Elapsed time:{timer.Elapsed.ToString()}");
+        }
+
+        private static void FindWords(Span<char> buffer, StringHash words)
+        {
+            int[] counts = new int[buffer.Length + 1];
+            for (int i = 0; i < counts.Length; ++i)
+            {
+                counts[i] = i;
+            }
+
+            int pos = 1;
+            while (pos < buffer.Length)
+            {
+                FindSubWords(buffer, words);
+
+                int pos2;
+                counts[pos]--;
+                if (pos % 2 == 0)
+                {
+                    pos2 = 0;
+                }
+                else
+                {
+                    pos2 = counts[pos];
+                }
+
+                char ch = buffer[pos];
+                buffer[pos] = buffer[pos2];
+                buffer[pos2] = ch;
+
+                pos = 1;
+                while (counts[pos] == 0)
+                {
+                    counts[pos] = pos;
+                    ++pos;
+                }
+            }
+        }
+
+        private static void FindSubWords(Span<char> buffer, StringHash words)
+        {
+            for (int i = 3; i < buffer.Length; ++i)
+            {
+                for (int pos = 0; pos + i < buffer.Length; ++pos)
+                {
+                    ReadOnlySpan<char> slice = buffer.Slice(pos, i);
+                    if (IsValidWord(slice))
+                    {
+                        words.Add(slice);
+                    }
+                }
+            }
         }
 
         private static bool IsValidWord(ReadOnlySpan<char> subWord)
@@ -72,48 +113,6 @@ namespace countdown
             }
 
             return false;
-        }
-
-        private static List<string> GenerateSubWords(string word)
-        {
-            List<string> subWords = new List<string>();
-            for (int i = 3; i < word.Length; ++i)
-            {
-                for (int pos = 0; pos + i < word.Length; ++pos)
-                {
-                    string subWord = word.Substring(pos, i);
-                    subWords.Add(subWord);
-                }
-            }
-
-            return subWords;
-        }
-
-        private static List<string> GeneratePermuation(List<char> chars)
-        {
-            List<string> permutations = new List<string>();
-            if (chars.Count == 1)
-            {
-                permutations.Add(new String(chars.ToArray()));
-            }
-            else if (chars.Count > 1)
-            {
-                char ch;
-                for (int i = 0; i < chars.Count; ++i)
-                {
-                    ch = chars.ElementAt(0);
-                    chars.RemoveAt(0);
-                    List<string> subPermutations = GeneratePermuation(chars);
-                    foreach (string sub in subPermutations)
-                    {
-                        string str = ch + sub;
-                        permutations.Add(str);
-                    }
-                    chars.Add(ch);
-                }
-            }
-
-            return permutations;
         }
 
         static void LoadWordList()
