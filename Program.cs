@@ -13,9 +13,9 @@ namespace countdown
 
         static void Main(string[] args)
         {
-            if (args.Length != 1 || args[0].Length != 9)
+            if (args.Length != 1 || args[0].Length < 3)
             {
-                Console.WriteLine("Provide the 9 letter scramble!");
+                Console.WriteLine("Provide the letter scramble at least 3 characters long!");
                 return;
             }
 
@@ -38,46 +38,48 @@ namespace countdown
 
         private static void FindWords(Span<char> buffer, StringHash words)
         {
-            int[] counts = new int[buffer.Length + 1];
-            for (int i = 0; i < counts.Length; ++i)
+            int[] p = new int[buffer.Length + 1];
+            for (int count = 0; count < p.Length; ++count)
             {
-                counts[i] = i;
+                p[count] = count;
             }
 
-            int pos = 1;
-            while (pos < buffer.Length)
-            {
-                FindSubWords(buffer, words);
+            FindSubWords(buffer, words);
 
-                int pos2;
-                counts[pos]--;
-                if (pos % 2 == 0)
+            int i = 1;
+            while (i < buffer.Length)
+            {
+                int j;
+                p[i]--;
+                if (i % 2 == 0)
                 {
-                    pos2 = 0;
+                    j = 0;
                 }
                 else
                 {
-                    pos2 = counts[pos];
+                    j = p[i];
                 }
 
-                char ch = buffer[pos];
-                buffer[pos] = buffer[pos2];
-                buffer[pos2] = ch;
+                char ch = buffer[i];
+                buffer[i] = buffer[j];
+                buffer[j] = ch;
 
-                pos = 1;
-                while (counts[pos] == 0)
+                FindSubWords(buffer, words);
+
+                i = 1;
+                while (p[i] == 0)
                 {
-                    counts[pos] = pos;
-                    ++pos;
+                    p[i] = i;
+                    ++i;
                 }
             }
         }
 
         private static void FindSubWords(Span<char> buffer, StringHash words)
         {
-            for (int i = 3; i < buffer.Length; ++i)
+            for (int i = 3; i <= buffer.Length; ++i)
             {
-                for (int pos = 0; pos + i < buffer.Length; ++pos)
+                for (int pos = 0; pos + i <= buffer.Length; ++pos)
                 {
                     ReadOnlySpan<char> slice = buffer.Slice(pos, i);
                     if (IsValidWord(slice))
